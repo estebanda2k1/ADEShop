@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS order_items (
   FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
 
--- sample data
+-- sample data --
 INSERT INTO users (username, password, is_admin) VALUES
 ('admin', '$2y$10$eImiTXuWVxfM37uY4JANjQ==', 1) ON DUPLICATE KEY UPDATE username=username;
 
