@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vista Previa - Formulario de Registro ADESHOP</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .preview-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 30px;
+        }
+        .feature-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            background: #28a745;
+            color: white;
+            border-radius: 20px;
+            font-size: 12px;
+            margin: 5px;
+        }
+        .screenshot {
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            background: #f8f9fa;
+            margin: 20px 0;
+        }
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+        h1 {
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #764ba2;
+            margin-top: 30px;
+        }
+        .check-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: #e7f3ff;
+            border-left: 4px solid #0066cc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="preview-container">
+        <h1>📝 Módulo de Registro ADESHOP - Documentación Visual</h1>
+        
+        <p class="lead">Sistema completo de registro de usuarios para la tienda online ADESHOP</p>
+        
+        <div class="alert alert-success">
+            <strong>✅ Estado:</strong> Módulo completamente funcional y listo para producción
+        </div>
+
+        <h2>🎯 Características Implementadas</h2>
+        <div class="mb-4">
+            <span class="feature-badge">✅ Validación Frontend</span>
+            <span class="feature-badge">✅ Validación Backend</span>
+            <span class="feature-badge">✅ Contraseñas Seguras</span>
+            <span class="feature-badge">✅ PDO Prepared Statements</span>
+            <span class="feature-badge">✅ Diseño Responsive</span>
+            <span class="feature-badge">✅ Campos Únicos</span>
+            <span class="feature-badge">✅ Mensajes de Error</span>
+            <span class="feature-badge">✅ Bootstrap 5</span>
+        </div>
+
+        <h2>📋 Campos del Formulario</h2>
+        <div class="screenshot">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Campo</th>
+                        <th>Tipo</th>
+                        <th>Validación</th>
+                        <th>Obligatorio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Nombres</strong></td>
+                        <td>Text</td>
+                        <td>Solo letras y espacios, máx 100 caracteres</td>
+                        <td>✅ Sí</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Apellidos</strong></td>
+                        <td>Text</td>
+                        <td>Solo letras y espacios, máx 100 caracteres</td>
+                        <td>✅ Sí</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Correo Electrónico</strong></td>
+                        <td>Email</td>
+                        <td>Formato email válido, único en BD</td>
+                        <td>✅ Sí</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Cédula</strong></td>
+                        <td>Text</td>
+                        <td>Solo números, mín 6 dígitos, única en BD</td>
+                        <td>✅ Sí</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Contraseña</strong></td>
+                        <td>Password</td>
+                        <td>Mínimo 6 caracteres, hasheada con bcrypt</td>
+                        <td>✅ Sí</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Confirmar Contraseña</strong></td>
+                        <td>Password</td>
+                        <td>Debe coincidir con la contraseña</td>
+                        <td>✅ Sí</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2>🗄️ Estructura de Base de Datos</h2>
+        <div class="code-block">
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombres VARCHAR(100) NOT NULL,
+  apellidos VARCHAR(100) NOT NULL,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  cedula VARCHAR(20) NOT NULL UNIQUE,
+  username VARCHAR(100) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  is_admin TINYINT(1) DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+        </div>
+
+        <h2>🔒 Seguridad Implementada</h2>
+        <div class="check-item">
+            <strong>🛡️ SQL Injection:</strong> Protegido con PDO prepared statements
+        </div>
+        <div class="check-item">
+            <strong>🔐 Contraseñas:</strong> Hasheadas con password_hash() usando bcrypt
+        </div>
+        <div class="check-item">
+            <strong>🧹 XSS:</strong> Sanitización con htmlspecialchars()
+        </div>
+        <div class="check-item">
+            <strong>✅ Validación Doble:</strong> Frontend (UX) + Backend (Seguridad)
+        </div>
+        <div class="check-item">
+            <strong>🎯 Unicidad:</strong> Email y cédula verificados antes de insertar
+        </div>
+
+        <h2>🎨 Validaciones en Tiempo Real</h2>
+        <ul>
+            <li><strong>Nombres/Apellidos:</strong> Solo se permiten letras y espacios (bloqueo automático de números)</li>
+            <li><strong>Cédula:</strong> Solo se permiten números (bloqueo automático de letras)</li>
+            <li><strong>Email:</strong> Validación de formato HTML5</li>
+            <li><strong>Contraseñas:</strong> Comparación en tiempo real, alerta si no coinciden</li>
+            <li><strong>Feedback visual:</strong> Bordes rojos/verdes según validación</li>
+        </ul>
+
+        <h2>📱 Responsive Design</h2>
+        <p>El formulario se adapta perfectamente a:</p>
+        <ul>
+            <li>📱 <strong>Móviles:</strong> Diseño vertical optimizado</li>
+            <li>💻 <strong>Tablets:</strong> Formulario centrado</li>
+            <li>🖥️ <strong>Desktop:</strong> Tarjeta con sombra, centrada (máx 600px)</li>
+        </ul>
+
+        <h2>🚀 Cómo Usar</h2>
+        <div class="alert alert-info">
+            <h4>Paso 1: Importar la Base de Datos</h4>
+            <p>Abre phpMyAdmin y ejecuta el archivo <code>database/adeshop.sql</code></p>
+            
+            <h4>Paso 2: Verificar config.php</h4>
+            <div class="code-block">
+$DB_HOST = '127.0.0.1';
+$DB_NAME = 'adeshop';
+$DB_USER = 'root';
+$DB_PASS = ''; // Tu contraseña MySQL
+            </div>
+            
+            <h4>Paso 3: Acceder al Formulario</h4>
+            <p>Navega a: <code>http://localhost/ADESHOP/registro.php</code></p>
+        </div>
+
+        <h2>💡 Flujo de Registro</h2>
+        <ol>
+            <li>Usuario completa el formulario</li>
+            <li>Validación en tiempo real mientras escribe</li>
+            <li>Click en "Registrarse"</li>
+            <li>Validación backend completa</li>
+            <li>Verificación de email único</li>
+            <li>Verificación de cédula única</li>
+            <li>Generación automática de username</li>
+            <li>Hash de contraseña con bcrypt</li>
+            <li>Inserción en base de datos</li>
+            <li>Mensaje de éxito + opciones de navegación</li>
+        </ol>
+
+        <h2>🎯 Username Automático</h2>
+        <p>El sistema genera automáticamente un username único:</p>
+        <div class="code-block">
+juan@email.com  →  username: "juan"
+maria@email.com →  username: "maria"
+
+Si ya existe:
+juan@email.com  →  username: "juan1729234567" (con timestamp)
+        </div>
+
+        <h2>⚠️ Mensajes de Error</h2>
+        <div class="screenshot">
+            <ul>
+                <li>"El nombre es requerido"</li>
+                <li>"Los apellidos son requeridos"</li>
+                <li>"El correo electrónico no es válido"</li>
+                <li>"La cédula debe contener solo números (mínimo 6 dígitos)"</li>
+                <li>"La contraseña debe tener al menos 6 caracteres"</li>
+                <li>"Las contraseñas no coinciden"</li>
+                <li>"Este correo electrónico ya está registrado"</li>
+                <li>"Esta cédula ya está registrada"</li>
+            </ul>
+        </div>
+
+        <h2>✅ Mensaje de Éxito</h2>
+        <div class="alert alert-success">
+            <strong>Éxito:</strong> Registro exitoso! Ya puedes iniciar sesión.
+            <br><br>
+            <button class="btn btn-primary">Ir a la tienda</button>
+            <button class="btn btn-secondary">Iniciar sesión</button>
+        </div>
+
+        <h2>📂 Archivos del Módulo</h2>
+        <ul>
+            <li><code>registro.php</code> - Formulario principal con toda la lógica</li>
+            <li><code>database/adeshop.sql</code> - Tabla users actualizada</li>
+            <li><code>templates/header.php</code> - Menú con enlace a registro</li>
+            <li><code>docs/REGISTRO.md</code> - Documentación técnica completa</li>
+            <li><code>README.md</code> - Readme actualizado</li>
+        </ul>
+
+        <h2>🎓 Tecnologías Utilizadas</h2>
+        <div class="mb-3">
+            <span class="badge bg-primary">PHP 7.4+</span>
+            <span class="badge bg-info">PDO</span>
+            <span class="badge bg-success">MySQL</span>
+            <span class="badge bg-warning text-dark">Bootstrap 5</span>
+            <span class="badge bg-danger">JavaScript Vanilla</span>
+            <span class="badge bg-secondary">HTML5</span>
+        </div>
+
+        <h2>📈 Próximas Mejoras Sugeridas</h2>
+        <ul>
+            <li>🔐 Login de usuarios (ya existe para admin)</li>
+            <li>📧 Verificación de email por correo</li>
+            <li>🔑 Recuperación de contraseña</li>
+            <li>👤 Página de perfil de usuario</li>
+            <li>✏️ Edición de datos personales</li>
+            <li>📜 Historial de pedidos</li>
+            <li>⭐ Sistema de favoritos</li>
+        </ul>
+
+        <div class="alert alert-warning mt-4">
+            <strong>⚠️ Importante:</strong> Este módulo está <strong>completamente funcional</strong> y listo para conectarse a la base de datos. Solo asegúrate de:
+            <ol>
+                <li>Tener XAMPP con Apache y MySQL corriendo</li>
+                <li>Haber importado el archivo SQL actualizado</li>
+                <li>Verificar las credenciales en config.php</li>
+            </ol>
+        </div>
+
+        <div class="text-center mt-5">
+            <h3>🎉 ¡Módulo Listo para Usar!</h3>
+            <p class="text-muted">Desarrollado con las mejores prácticas de seguridad y UX</p>
+            <a href="http://localhost/ADESHOP/registro.php" class="btn btn-primary btn-lg" target="_blank">
+                Probar Formulario de Registro
+            </a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
