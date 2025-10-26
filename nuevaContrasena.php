@@ -30,24 +30,28 @@ $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
 //Actualizar la contraseña en la base de datos
 try {
-    // Usamos la variable $pdo de config.php para la conexión.
     $stmt = $pdo->prepare("UPDATE users SET password = :password WHERE email = :email");
     $stmt->execute([
         'password' => $hashed_password,
         'email' => $email
     ]);
-
+ 
+    // Eliminamos las variables de sesión usadas para la recuperación (seguridad)
     unset($_SESSION['recovery_email']);
     unset($_SESSION['recovery_success']);
     
-    $_SESSION['login_message'] = "🎉 ¡Contraseña restablecida con éxito! Ya puedes iniciar sesión.";
+    // ** CAMBIO CLAVE AQUÍ: Establecemos bandera de éxito y redirigimos a la pantalla de confirmación **
+    $_SESSION['password_reset_success'] = true;
 
-    header('Location: iniciarSesion.php');
+    // Redirigir a la nueva pantalla de confirmación HTML
+    header('Location: confirmacionCambio.php'); 
+    exit;
 
 } catch (PDOException $e) {
     // Manejo de error de base de datos
     error_log("Error de BD al cambiar contraseña: " . $e->getMessage());
     $_SESSION['change_error'] = "⚠️ Error interno del sistema. No se pudo actualizar la contraseña.";
     header('Location: cambiarContrasena.php');
+    exit;
 }
 ?>
