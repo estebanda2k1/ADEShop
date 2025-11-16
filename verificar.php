@@ -31,11 +31,18 @@ echo "<h2>3. Archivos del Proyecto</h2>";
 $files = [
     'config.php',
     'registro.php',
+    'dashboard.php',
     'index.php',
     'templates/header.php',
     'templates/footer.php',
     'database/adeshop.sql',
+    'admin/usuarios.php',
+    'admin/usuario_crear.php',
+    'admin/usuario_ver.php',
+    'admin/usuario_editar.php',
+    'admin/usuario_exportar.php',
     'docs/REGISTRO.md',
+    'docs/CRUD_USUARIOS.md',
     'README.md'
 ];
 
@@ -134,8 +141,11 @@ echo "<ul>";
 echo "<li><a href='index.php'>🏠 Página Principal</a></li>";
 echo "<li><a href='registro.php'>📝 Formulario de Registro</a></li>";
 echo "<li><a href='cart.php'>🛒 Carrito</a></li>";
+echo "<li><a href='dashboard.php'>📊 Dashboard Administrativo</a></li>";
 echo "<li><a href='admin/login.php'>👨‍💼 Login Admin</a></li>";
-echo "<li><a href='docs/preview-registro.html'>📄 Vista Previa del Módulo</a></li>";
+echo "<li><a href='admin/usuarios.php'>👥 Gestión de Usuarios (CRUD)</a></li>";
+echo "<li><a href='docs/preview-registro.html'>📄 Vista Previa Módulo Registro</a></li>";
+echo "<li><a href='docs/preview-crud-usuarios.html'>📄 Vista Previa Módulo CRUD</a></li>";
 echo "</ul>";
 
 // Resumen final
