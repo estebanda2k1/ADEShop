@@ -1,5 +1,8 @@
 <?php
-require_once 'config.php';
+// Incluir config.php desde la raíz del proyecto
+if (!isset($pdo)) {
+    require_once __DIR__ . '/../config.php';
+}
 ?>
 
 <!DOCTYPE html>

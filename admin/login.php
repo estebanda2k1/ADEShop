@@ -9,7 +9,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($user && password_verify($password, $user['password'])) {
         $_SESSION['is_admin'] = (bool)$user['is_admin'];
         $_SESSION['user_id'] = $user['id'];
-        header('Location: index.php'); exit;
+        $_SESSION['username'] = $user['username'];
+        
+        // Redirigir según el tipo de usuario
+        if ($user['is_admin']) {
+            header('Location: ../dashboard.php');
+        } else {
+            header('Location: ../index.php');
+        }
+        exit;
     } else {
         $error = 'Invalid credentials';
     }
