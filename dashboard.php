@@ -110,7 +110,7 @@ require 'templates/header.php';
             <div class="card dashboard-card h-100">
                 <div class="card-body text-center">
                     <i class="bi bi-people text-primary" style="font-size: 4rem;"></i>
-                    <h3 class="card-title mt-3">Gestión de Usuarios</h3>
+                    <h3 class="card-title mt-3">Gestión de Clientes</h3>
                     <p class="card-text">Administra los clientes registrados en la plataforma</p>
                     <a href="admin/usuarios.php" class="btn btn-primary btn-lg">
                         <i class="bi bi-arrow-right-circle"></i> Acceder
