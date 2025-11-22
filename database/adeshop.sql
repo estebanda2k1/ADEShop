@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS products (
   name VARCHAR(255) NOT NULL,
   description TEXT,
   price DECIMAL(10,2) NOT NULL DEFAULT 0,
+  stock INT NOT NULL DEFAULT 0,
   image VARCHAR(255) NULL,
   category_id INT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -36,10 +37,11 @@ CREATE TABLE IF NOT EXISTS products (
 -- orders
 CREATE TABLE IF NOT EXISTS orders (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  user_name VARCHAR(255) NOT NULL,
-  user_email VARCHAR(255) NOT NULL,
+  user_id INT NOT NULL,
   total DECIMAL(10,2) NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  status VARCHAR(50) DEFAULT 'pending',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- order items
@@ -47,22 +49,26 @@ CREATE TABLE IF NOT EXISTS order_items (
   id INT AUTO_INCREMENT PRIMARY KEY,
   order_id INT NOT NULL,
   product_id INT NOT NULL,
-  qty INT NOT NULL DEFAULT 1,
+  quantity INT NOT NULL DEFAULT 1,
   price DECIMAL(10,2) NOT NULL,
   FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
   FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
 
 -- sample data --
-INSERT INTO users (username, password, is_admin) VALUES
-('admin', '$2y$10$eImiTXuWVxfM37uY4JANjQ==', 1) ON DUPLICATE KEY UPDATE username=username;
+-- Usuario administrador por defecto: admin@admin.com / admin123
+INSERT INTO users (nombres, apellidos, email, cedula, username, password, is_admin) VALUES
+('Administrador', 'Sistema', 'admin@admin.com', '9999999999', 'admin', '$2y$10$JlDedjSIYNVdenuk1SS6neW02H7EZNOKRtBw0nJ9JBR04RRj5iIdq', 1) 
+ON DUPLICATE KEY UPDATE 
+    password = '$2y$10$JlDedjSIYNVdenuk1SS6neW02H7EZNOKRtBw0nJ9JBR04RRj5iIdq',
+    is_admin = 1;
 
 INSERT INTO categories (name) VALUES
 ('T-Shirts'),('Hoodies'),('Jeans')
 ON DUPLICATE KEY UPDATE name=name;
 
-INSERT INTO products (name, description, price, image, category_id) VALUES
-('Basic White Tee','Soft cotton t-shirt','9.99','assets/images/white-tee.jpg',1),
-('Logo Hoodie','Pullover hoodie with logo','29.99','assets/images/hoodie.jpg',2),
-('Slim Jeans','Blue slim fit jeans','39.99','assets/images/jeans.jpg',3)
+INSERT INTO products (name, description, price, stock, image, category_id) VALUES
+('Basic White Tee','Soft cotton t-shirt','9.99', 15, 'assets/images/white-tee.jpg',1),
+('Logo Hoodie','Pullover hoodie with logo','29.99', 8, 'assets/images/hoodie.jpg',2),
+('Slim Jeans','Blue slim fit jeans','39.99', 3, 'assets/images/jeans.jpg',3)
 ON DUPLICATE KEY UPDATE name=VALUES(name);

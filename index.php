@@ -1,5 +1,10 @@
 <?php
+require 'config.php';
 require 'templates/header.php';
+
+// Obtener productos de la base de datos
+$stmt = $pdo->query('SELECT * FROM products ORDER BY created_at DESC LIMIT 12');
+$productos = $stmt->fetchAll();
 
 ?>
 
@@ -12,6 +17,7 @@ require 'templates/header.php';
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
     <!-- Estilos personalizados -->
     <style>
@@ -35,6 +41,7 @@ require 'templates/header.php';
             overflow: hidden;
             transition: transform 0.2s, box-shadow 0.2s;
             background-color: #fff;
+            height: 100%;
         }
 
         .product-card:hover {
@@ -45,6 +52,41 @@ require 'templates/header.php';
         .product-card img {
             height: 250px;
             object-fit: cover;
+            width: 100%;
+        }
+        
+        .product-card .no-image {
+            height: 250px;
+            background: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+        }
+
+        .stock-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .stock-low {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .stock-out {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .stock-good {
+            background-color: #28a745;
+            color: white;
         }
 
         footer {
@@ -89,54 +131,68 @@ require 'templates/header.php';
     <h2 class="text-center mb-4 fw-bold">Colección Destacada</h2>
 
     <div class="row g-4">
-
-        <!-- Caja de producto 1 -->
-        <div class="col-md-3 col-sm-6">
-            <div class="card product-card">
-                <img src="imagenes/Producto1.png" class="card-img-top" alt="Producto 1">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Camiseta Básica</h5>
-                    <p class="card-text text-muted">$19.99</p>
-                    <button class="btn btn-dark w-100">Ver más</button>
+        <?php if (empty($productos)): ?>
+            <div class="col-12">
+                <div class="alert alert-info text-center">
+                    <i class="bi bi-info-circle"></i> No hay productos disponibles en este momento.
                 </div>
             </div>
-        </div>
-
-        <!-- Caja de producto 2 -->
-        <div class="col-md-3 col-sm-6">
-            <div class="card product-card">
-                <img src="imagenes/Producto2.png" class="card-img-top" alt="Producto 2">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Jeans Clásicos</h5>
-                    <p class="card-text text-muted">$29.99</p>
-                    <button class="btn btn-dark w-100">Ver más</button>
+        <?php else: ?>
+            <?php foreach ($productos as $producto): ?>
+                <div class="col-md-3 col-sm-6">
+                    <div class="card product-card position-relative">
+                        <?php if ($producto['stock'] == 0): ?>
+                            <span class="stock-badge stock-out">
+                                <i class="bi bi-x-circle"></i> Agotado
+                            </span>
+                        <?php elseif ($producto['stock'] <= 5): ?>
+                            <span class="stock-badge stock-low">
+                                <i class="bi bi-exclamation-triangle"></i> ¡Últimas unidades!
+                            </span>
+                        <?php elseif ($producto['stock'] <= 10): ?>
+                            <span class="stock-badge stock-good">
+                                <i class="bi bi-check-circle"></i> Disponible
+                            </span>
+                        <?php endif; ?>
+                        
+                        <?php if ($producto['image']): ?>
+                            <img src="<?php echo htmlspecialchars($producto['image']); ?>" 
+                                 class="card-img-top" 
+                                 alt="<?php echo htmlspecialchars($producto['name']); ?>">
+                        <?php else: ?>
+                            <div class="no-image">
+                                <i class="bi bi-image" style="font-size: 3rem;"></i>
+                            </div>
+                        <?php endif; ?>
+                        
+                        <div class="card-body text-center">
+                            <h5 class="card-title"><?php echo htmlspecialchars($producto['name']); ?></h5>
+                            <p class="card-text text-success fw-bold">$<?php echo number_format($producto['price'], 2); ?></p>
+                            
+                            <?php if ($producto['stock'] > 0): ?>
+                                <?php if (isset($_SESSION['user_id'])): ?>
+                                    <form method="post" action="cart.php" class="d-inline">
+                                        <input type="hidden" name="product_id" value="<?php echo $producto['id']; ?>">
+                                        <input type="hidden" name="action" value="add">
+                                        <button type="submit" class="btn btn-dark w-100">
+                                            <i class="bi bi-cart-plus"></i> Agregar al Carrito
+                                        </button>
+                                    </form>
+                                <?php else: ?>
+                                    <a href="iniciarSesion.php" class="btn btn-dark w-100">
+                                        <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión para Comprar
+                                    </a>
+                                <?php endif; ?>
+                            <?php else: ?>
+                                <button class="btn btn-secondary w-100" disabled>
+                                    <i class="bi bi-x-circle"></i> No Disponible
+                                </button>
+                            <?php endif; ?>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Caja de producto 3 -->
-        <div class="col-md-3 col-sm-6">
-            <div class="card product-card">
-                <img src="imagenes/Producto3.png" class="card-img-top" alt="Producto 3">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Chaqueta Minimal</h5>
-                    <p class="card-text text-muted">$49.99</p>
-                    <button class="btn btn-dark w-100">Ver más</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Caja de producto 4 -->
-        <div class="col-md-3 col-sm-6">
-            <div class="card product-card">
-                <img src="imagenes/Producto4.png" class="card-img-top" alt="Producto 4">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Zapatillas Urbanas</h5>
-                    <p class="card-text text-muted">$59.99</p>
-                    <button class="btn btn-dark w-100">Ver más</button>
-                </div>
-            </div>
-        </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
     </div>
 </main>
 

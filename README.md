@@ -1,235 +1,238 @@
-# ADESHOP - Mini Marketplace (Tienda de Ropa)
+# ADESHOP - Sistema de Tienda de Ropa
 
-Este es un proyecto PHP + MySQL (XAMPP) para un mini-marketplace de tienda de ropa con sistema de registro de usuarios completo.
+Sistema completo de gestión de tienda de ropa desarrollado en PHP, MySQL y Bootstrap 5.
+
+## 🚀 Características
+
+### Para Administradores:
+- ✅ **Gestión de Usuarios**: CRUD completo de clientes con búsqueda, paginación y exportación CSV
+- ✅ **Gestión de Productos**: Agregar, editar, eliminar productos con control de inventario/stock
+- ✅ **Gestión de Órdenes**: Visualizar todas las órdenes con sus estados y detalles
+- ✅ **Control de Stock**: Sistema de alertas cuando el stock está bajo (≤5 unidades)
+- ✅ **Dashboard**: Estadísticas rápidas de usuarios, productos y pedidos
+
+### Para Clientes:
+- ✅ **Registro de Usuario**: Sistema completo con validación de campos (nombres, apellidos, email, cédula, contraseña)
+- ✅ **Catálogo de Productos**: Visualización de productos con información de stock
+- ✅ **Carrito de Compras**: Agregar productos, modificar cantidades, verificación de stock disponible
+- ✅ **Sistema de Checkout**: Procesamiento de órdenes con reducción automática de stock
+- ✅ **Indicadores Visuales**: Badges de stock (Agotado, Últimas unidades, Disponible)
 
 ## 📋 Requisitos
 
-- XAMPP (Apache + MySQL)
-- PHP 7.4+
+- XAMPP (PHP 7.4+ y MySQL/MariaDB)
 - Navegador web moderno
+- Bootstrap 5.3.2 (incluido vía CDN)
+- Bootstrap Icons (incluido vía CDN)
 
-## 🚀 Instalación Rápida
+## 🔧 Instalación
 
-1. Copia la carpeta `ADESHOP` en `C:\xampp\htdocs` (si no está ya ahí)
-2. Inicia Apache y MySQL desde el panel de control de XAMPP
-3. Crea la base de datos e importa el esquema:
-   - Abre phpMyAdmin: `http://localhost/phpmyadmin`
-   - Importa el archivo `database/adeshop.sql`
-4. Edita `config.php` si es necesario (por defecto usa `root` sin contraseña)
-5. Abre `http://localhost/ADESHOP` en tu navegador
+### 1. Descargar e instalar XAMPP
+- Descargar desde: https://www.apachefriends.org/
+- Instalar y abrir XAMPP Control Panel
+- Iniciar los servicios Apache y MySQL
 
-## ✨ Características Implementadas
+### 2. Configurar el proyecto
 
-### 📝 Sistema de Registro de Usuarios
-- ✅ Registro completo con validaciones
-- ✅ Campos: Nombres, Apellidos, Email, Cédula, Contraseña
-- ✅ Validación frontend (JavaScript) y backend (PHP)
-- ✅ Contraseñas hasheadas con bcrypt
-- ✅ Verificación de emails y cédulas únicas
-- ✅ Mensajes de error y éxito claros
-- ✅ Diseño responsive con Bootstrap 5
+1. Copiar la carpeta `ADESHOP` a:
+   ```
+   C:\xampp\htdocs\ADESHOP
+   ```
 
-### 👥 Sistema CRUD de Gestión de Usuarios (Panel Admin)
-- ✅ **Dashboard administrativo** con estadísticas
-- ✅ **Lista completa de usuarios** con búsqueda y paginación
-- ✅ **Crear nuevos usuarios** desde el panel admin
-- ✅ **Ver detalles** de cada usuario
-- ✅ **Editar usuarios** existentes
-- ✅ **Eliminar usuarios** con confirmación
-- ✅ **Exportar a CSV** toda la base de datos de clientes
-- ✅ Filtrado automático (solo muestra clientes, no admins)
-- ✅ Control de acceso completo a la plataforma
+2. Crear la base de datos:
+   - Abrir phpMyAdmin: http://localhost/phpmyadmin
+   - Importar el archivo: `database/adeshop.sql`
+   - O ejecutar el script SQL directamente
 
-### 🛍️ Tienda
-- `index.php` - Catálogo de productos
-- `product.php` - Detalle de producto
-- `cart.php` - Carrito de compras basado en sesiones
+3. Verificar la configuración en `config.php`:
+   ```php
+   $host = 'localhost';
+   $dbname = 'adeshop';
+   $username = 'root';
+   $password = ''; // En XAMPP por defecto está vacío
+   ```
 
-### 👨‍💼 Área de Administración
-- `dashboard.php` - Panel de control principal
-- `admin/login.php` - Login de administrador
-- `admin/usuarios.php` - 🆕 Gestión completa de usuarios (CRUD)
-- `admin/usuario_crear.php` - 🆕 Crear nuevo usuario
-- `admin/usuario_ver.php` - 🆕 Ver detalles de usuario
-- `admin/usuario_editar.php` - 🆕 Editar usuario
-- `admin/usuario_exportar.php` - 🆕 Exportar usuarios a CSV
-- `admin/products.php` - Gestión de productos
+4. Configurar permisos de escritura en la carpeta `uploads/` para imágenes de productos
+
+### 3. Acceder al sistema
+
+**Página Principal:**
+- URL: http://localhost/ADESHOP/
+
+**Usuario Administrador por defecto:**
+- URL: http://localhost/ADESHOP/admin/dashboard.php
+- Email: `admin@admin.com`
+- Usuario: `admin`
+- Contraseña: `admin123`
+
+> **Nota**: Si el usuario administrador no existe o necesitas restablecerlo, accede a: `http://localhost/ADESHOP/admin/actualizar_admin.php`
+
+**Registro de Cliente:**
+- URL: http://localhost/ADESHOP/public/auth/registro.php
+
+## 👤 Usuarios por Defecto
+
+### Administrador
+- Email: admin@admin.com
+- Usuario: admin
+- Contraseña: admin123
+- Cédula: 9999999999
+
+### Cliente
+- Registrarse desde: `http://localhost/ADESHOP/public/auth/registro.php`
 
 ## 📁 Estructura del Proyecto
 
 ```
 ADESHOP/
-├── config.php                      # Configuración de base de datos
-├── index.php                       # Página principal (productos)
-├── product.php                     # Detalle de producto
-├── cart.php                        # Carrito de compras
-├── registro.php                    # Módulo de registro de usuarios
-├── dashboard.php                   # 🆕 Panel de control administrativo
-├── admin/                          # Panel de administración
-│   ├── index.php
-│   ├── login.php
-│   ├── logout.php
-│   ├── products.php
-│   ├── usuarios.php                # 🆕 Lista de usuarios (CRUD)
-│   ├── usuario_crear.php           # 🆕 Crear usuario
-│   ├── usuario_ver.php             # 🆕 Ver detalles de usuario
-│   ├── usuario_editar.php          # 🆕 Editar usuario
-│   └── usuario_exportar.php        # 🆕 Exportar usuarios a CSV
-├── templates/                      # Plantillas compartidas
-│   ├── header.php
-│   └── footer.php
-├── database/                       # Scripts SQL
-│   └── adeshop.sql                # Esquema actualizado
-├── docs/                           # Documentación
-│   ├── REGISTRO.md                # Doc del módulo de registro
-│   └── CRUD_USUARIOS.md           # 🆕 Doc del módulo CRUD
-├── assets/                         # Recursos estáticos
-│   └── images/                    # Imágenes de productos
-└── README.md                       # Este archivo
+│
+├── admin/                      # Panel de administración
+│   ├── dashboard.php          # Panel principal
+│   ├── usuarios.php           # Listado de usuarios
+│   ├── usuario_*.php          # CRUD de usuarios
+│   ├── productos.php          # Listado de productos
+│   ├── producto_*.php         # CRUD de productos
+│   ├── ordenes.php            # Listado de órdenes
+│   └── orden_ver.php          # Detalles de orden
+│
+├── assets/                     # Recursos estáticos
+│   └── images/
+│       └── products/          # Imágenes de productos
+│
+├── database/
+│   └── adeshop.sql            # Esquema de base de datos
+│
+├── templates/
+│   ├── header.php             # Encabezado común
+│   └── footer.php             # Pie de página común
+│
+├── config.php                 # Configuración de BD y sesión
+├── index.php                  # Página principal (catálogo)
+├── registro.php               # Registro de usuarios
+├── login.php                  # Inicio de sesión
+├── cart.php                   # Carrito de compras
+├── checkout.php               # Finalizar compra
+└── README.md                  # Este archivo
 ```
 
-## 🗄️ Estructura de Base de Datos
+## 🗄️ Base de Datos
 
-### Tabla: `users` (Actualizada)
-```sql
-- id (INT, AUTO_INCREMENT, PRIMARY KEY)
-- nombres (VARCHAR 100, NOT NULL)
-- apellidos (VARCHAR 100, NOT NULL)
-- email (VARCHAR 255, NOT NULL, UNIQUE)
-- cedula (VARCHAR 20, NOT NULL, UNIQUE)
-- username (VARCHAR 100, NOT NULL, UNIQUE)
-- password (VARCHAR 255, NOT NULL) -- hasheada con bcrypt
-- is_admin (TINYINT, DEFAULT 0)
-- created_at (TIMESTAMP)
-```
+### Tablas principales:
 
-### Otras Tablas
-- `categories` - Categorías de productos
-- `products` - Productos de la tienda
-- `orders` - Pedidos de clientes
-- `order_items` - Items de cada pedido
+1. **users**: Información de usuarios y administradores
+   - Campos: id, nombres, apellidos, email, cedula, username, password, is_admin
 
-Ver `docs/REGISTRO.md` para más detalles sobre el módulo de registro.  
-Ver `docs/CRUD_USUARIOS.md` para más detalles sobre el módulo de gestión de usuarios.
+2. **products**: Catálogo de productos
+   - Campos: id, name, description, price, stock, image, category_id
 
-## 🔐 Seguridad Implementada
+3. **categories**: Categorías de productos
+   - Campos: id, name
 
-- ✅ **SQL Injection**: Uso de prepared statements (PDO)
-- ✅ **XSS**: Sanitización con `htmlspecialchars()`
-- ✅ **Contraseñas**: Hash con `password_hash()` (bcrypt)
-- ✅ **Validación**: Doble validación (frontend + backend)
-- ✅ **Campos únicos**: Email y cédula verificados
-- ✅ **Control de acceso**: Verificación de sesión y permisos de administrador
-- ✅ **Autoprotección**: Los admins no pueden eliminarse a sí mismos
+4. **orders**: Órdenes de compra
+   - Campos: id, user_id, total, status, created_at
 
-## 🎯 Páginas Disponibles
+5. **order_items**: Detalles de cada orden
+   - Campos: id, order_id, product_id, quantity, price
 
-| URL | Descripción |
-|-----|-------------|
-| `/ADESHOP/` | Página principal con productos |
-| `/ADESHOP/registro.php` | Registro de nuevos usuarios |
-| `/ADESHOP/product.php?id=X` | Detalle de producto |
-| `/ADESHOP/cart.php` | Carrito de compras |
-| `/ADESHOP/dashboard.php` | 🆕 Panel de control administrativo |
-| `/ADESHOP/admin/login.php` | Login de administrador |
-| `/ADESHOP/admin/usuarios.php` | 🆕 Gestión de usuarios (CRUD) |
-| `/ADESHOP/admin/login.php` | Login de admin |
+## 🔒 Seguridad
 
-## 🧪 Probar el Módulo de Registro
+- **Contraseñas**: Encriptadas con `password_hash()` usando bcrypt
+- **SQL Injection**: Protección mediante PDO y prepared statements
+- **XSS**: Sanitización con `htmlspecialchars()`
+- **Sesiones**: Control de acceso basado en roles (admin/cliente)
 
-1. Navega a: `http://localhost/ADESHOP/registro.php`
-2. Completa el formulario con:
-   - Nombres (solo letras)
-   - Apellidos (solo letras)
-   - Email válido
-   - Cédula (solo números, mínimo 6 dígitos)
-   - Contraseña (mínimo 6 caracteres)
-   - Confirmar contraseña
-3. Haz clic en "Registrarse"
-4. Verás un mensaje de éxito y podrás iniciar sesión
+## 📊 Funcionalidades Detalladas
 
-## 🎮 Probar el Módulo de Gestión de Usuarios
+### Gestión de Inventario
 
-1. Inicia sesión como administrador en: `http://localhost/ADESHOP/admin/login.php`
-2. Accede al dashboard: `http://localhost/ADESHOP/dashboard.php`
-3. Haz clic en "Gestión de Usuarios"
-4. Podrás:
-   - Ver lista completa de clientes
-   - Buscar por nombre, email o cédula
-   - Crear nuevos usuarios
-   - Ver detalles de cada usuario
-   - Editar información de usuarios
-   - Eliminar usuarios (con confirmación)
-   - Exportar la base de datos a CSV
+1. **Agregar Producto**:
+   - Formulario con validación de campos
+   - Subida de imágenes (JPG, PNG, GIF, WEBP, máx 5MB)
+   - Control de stock inicial
 
-## 📝 Datos de Prueba
+2. **Editar Producto**:
+   - Modificar toda la información
+   - Actualizar imagen (opcional)
+   - Ajustar stock disponible
 
-El archivo SQL incluye datos de ejemplo:
-- **Categorías**: T-Shirts, Hoodies, Jeans
-- **Productos**: 3 productos de ejemplo
-- **Admin**: (deberás crear uno con el formulario de registro y luego cambiar `is_admin=1` en la BD)
+3. **Visualización de Stock**:
+   - Badge ROJO: Stock ≤ 5 unidades (Alerta)
+   - Badge VERDE: Stock > 5 unidades (Normal)
+   - Badge GRIS: Stock = 0 (Agotado)
 
-## 🚧 Próximas Funcionalidades (TODO)
+### Sistema de Compras
 
-- [x] ✅ CRUD completo de usuarios en admin
-- [ ] Login de usuarios (no solo admin)
-- [ ] Perfil de usuario editable
-- [ ] Recuperación de contraseña
-- [ ] Verificación de email
-- [ ] Checkout completo con persistencia de pedidos
-- [ ] CRUD completo de productos en admin
-- [ ] Upload de imágenes de productos
-- [ ] Filtros y búsqueda de productos
-- [ ] Historial de pedidos del usuario
+1. **Carrito**:
+   - Agregar productos desde catálogo
+   - Verificación automática de stock disponible
+   - Actualización en tiempo real de cantidades
+   - Cálculo automático de totales
 
-## 🛠️ Configuración
+2. **Checkout**:
+   - Resumen de productos
+   - Confirmación de orden
+   - Reducción automática de stock al confirmar
+   - Transacciones seguras (rollback en caso de error)
 
-### config.php
-```php
-$DB_HOST = '127.0.0.1';
-$DB_NAME = 'adeshop';
-$DB_USER = 'root';
-$DB_PASS = ''; // Cambiar si tu MySQL tiene contraseña
-```
+3. **Gestión de Órdenes (Admin)**:
+   - Listado con filtros y búsqueda
+   - Estados: Pendiente, Completado, Cancelado
+   - Vista detallada de cada orden
+   - Actualización de estados
 
-## 📚 Documentación Adicional
+## 🎨 Diseño
 
-- `docs/REGISTRO.md` - Documentación completa del módulo de registro
-- `docs/CRUD_USUARIOS.md` - 🆕 Documentación completa del módulo CRUD de usuarios
-
-## ⚠️ Notas Importantes
-
-1. **Base de Datos**: Los módulos están **listos para conectarse** a la base de datos. Solo necesitas importar el SQL actualizado.
-
-2. **Contraseñas**: Las contraseñas se almacenan hasheadas usando bcrypt. Nunca se guardan en texto plano.
-
-3. **Username**: Se genera automáticamente a partir del email (parte antes del @).
-
-4. **Validaciones**: El sistema valida en el frontend (para mejor UX) y en el backend (para seguridad).
-
-5. **Acceso Admin**: Solo usuarios con `is_admin=1` pueden acceder al dashboard y módulos administrativos.
-
-6. **Control de usuarios**: El módulo CRUD permite gestionar completamente la base de datos de clientes desde el panel de administración.
+- **Framework**: Bootstrap 5.3.2
+- **Iconos**: Bootstrap Icons
+- **Tema**: Gradientes modernos (#667eea → #764ba2)
+- **Responsive**: Compatible con dispositivos móviles
 
 ## 🐛 Solución de Problemas
 
-### "Database connection failed"
-- Verifica que MySQL esté corriendo en XAMPP
-- Verifica las credenciales en `config.php`
-- Verifica que la base de datos `adeshop` exista
+### Error: "Failed opening required 'config.php'"
+**Solución**: El archivo usa rutas absolutas con `__DIR__`. Verificar que todos los archivos estén en la carpeta correcta.
 
-### "Este correo electrónico ya está registrado"
-- El email debe ser único. Usa otro email o elimina el registro existente.
+### Error: SQLSTATE[42000] con LIMIT/OFFSET
+**Solución**: Ya corregido. Los valores LIMIT/OFFSET se concatenan como integers, no como parámetros PDO.
 
-### "Esta cédula ya está registrada"
-- La cédula debe ser única. Usa otra cédula o elimina el registro existente.
+### Imágenes no se muestran
+**Solución**: Verificar que la carpeta `assets/images/products/` tenga permisos de escritura.
 
-## 📧 Contacto
+### No puedo iniciar sesión como admin
+**Solución**: Verificar que el usuario admin esté en la BD ejecutando el SQL de instalación.
 
-Proyecto desarrollado para XAMPP / PHP + MySQL
+## 📝 Datos de Prueba
+
+El archivo SQL incluye:
+- 1 usuario administrador (admin/admin123)
+- 3 categorías de productos
+- 3 productos de ejemplo con stock
+
+Para agregar más datos de prueba, usar el panel de administración.
+
+## 🔄 Actualizaciones Futuras (Sugerencias)
+
+- [ ] Sistema de cupones de descuento
+- [ ] Historial de compras para clientes
+- [ ] Reportes y gráficas de ventas
+- [ ] Notificaciones por email
+- [ ] Sistema de reviews/calificaciones
+- [ ] Integración con pasarelas de pago
+- [ ] Gestión de envíos y tracking
+
+## 👥 Soporte
+
+Para problemas o preguntas sobre el sistema, revisar:
+1. Este archivo README
+2. Los comentarios en el código fuente
+3. La estructura de la base de datos en `database/adeshop.sql`
+
+## 📜 Licencia
+
+Proyecto educativo desarrollado para demostración de habilidades en PHP/MySQL.
 
 ---
 
-**Versión**: 1.1  
-**Última actualización**: Octubre 2025  
-**Estado**: ✅ Módulo de registro completamente funcional
+**Versión**: 2.0  
+**Última actualización**: Noviembre 2025  
+**Desarrollado con**: PHP, MySQL, Bootstrap 5

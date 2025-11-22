@@ -27,8 +27,8 @@ if (!$usuario) {
 }
 
 // Obtener estadísticas del usuario (pedidos si existen)
-$stmt = $pdo->prepare('SELECT COUNT(*) as total FROM orders WHERE user_email = ?');
-$stmt->execute([$usuario['email']]);
+$stmt = $pdo->prepare('SELECT COUNT(*) as total FROM orders WHERE user_id = ?');
+$stmt->execute([$usuario['id']]);
 $total_pedidos = $stmt->fetch()['total'];
 
 require '../templates/header.php';
