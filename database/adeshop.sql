@@ -18,7 +18,8 @@ CREATE TABLE IF NOT EXISTS users (
 -- categories
 CREATE TABLE IF NOT EXISTS categories (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(100) NOT NULL
+  name VARCHAR(100) NOT NULL,
+  UNIQUE KEY unique_category_name (name)
 );
 
 -- products
@@ -30,6 +31,9 @@ CREATE TABLE IF NOT EXISTS products (
   stock INT NOT NULL DEFAULT 0,
   image VARCHAR(255) NULL,
   category_id INT NULL,
+  is_on_sale TINYINT(1) DEFAULT 0 COMMENT 'Indica si el producto está en oferta',
+  sale_price DECIMAL(10,2) NULL COMMENT 'Precio con descuento cuando está en oferta',
+  sale_percentage INT NULL COMMENT 'Porcentaje de descuento (opcional)',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
 );
@@ -55,4 +59,16 @@ CREATE TABLE IF NOT EXISTS order_items (
   FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
 
+-- Crear tabla para almacenar carritos de compras persistentes
+CREATE TABLE IF NOT EXISTS cart_items (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  product_id INT NOT NULL,
+  quantity INT NOT NULL DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+  UNIQUE KEY unique_user_product (user_id, product_id)
+);
 

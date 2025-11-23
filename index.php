@@ -88,6 +88,39 @@ $productos = $stmt->fetchAll();
             background-color: #28a745;
             color: white;
         }
+        
+        .offer-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            background-color: #dc3545;
+            color: white;
+            z-index: 10;
+        }
+        
+        .price-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .original-price {
+            text-decoration: line-through;
+            color: #6c757d;
+            font-size: 0.9rem;
+            font-weight: normal;
+        }
+        
+        .sale-price {
+            color: #dc3545;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
 
         footer {
             background-color: #000;
@@ -155,6 +188,12 @@ $productos = $stmt->fetchAll();
                             </span>
                         <?php endif; ?>
                         
+                        <?php if (isset($producto['is_on_sale']) && $producto['is_on_sale'] && isset($producto['sale_percentage']) && $producto['sale_percentage']): ?>
+                            <span class="offer-badge">
+                                -<?php echo $producto['sale_percentage']; ?>% OFF
+                            </span>
+                        <?php endif; ?>
+                        
                         <?php if ($producto['image']): ?>
                             <img src="<?php echo htmlspecialchars($producto['image']); ?>" 
                                  class="card-img-top" 
@@ -167,7 +206,16 @@ $productos = $stmt->fetchAll();
                         
                         <div class="card-body text-center">
                             <h5 class="card-title"><?php echo htmlspecialchars($producto['name']); ?></h5>
-                            <p class="card-text text-success fw-bold">$<?php echo number_format($producto['price'], 2); ?></p>
+                            
+                            <?php if (isset($producto['is_on_sale']) && $producto['is_on_sale'] && isset($producto['sale_price']) && $producto['sale_price']): ?>
+                                <div class="price-container">
+                                    <span class="original-price">$<?php echo number_format($producto['price'], 2); ?></span>
+                                    <span class="sale-price">$<?php echo number_format($producto['sale_price'], 2); ?></span>
+                                    <small class="text-muted">¡Ahorra $<?php echo number_format($producto['price'] - $producto['sale_price'], 2); ?>!</small>
+                                </div>
+                            <?php else: ?>
+                                <p class="card-text text-success fw-bold">$<?php echo number_format($producto['price'], 2); ?></p>
+                            <?php endif; ?>
                             
                             <?php if ($producto['stock'] > 0): ?>
                                 <?php if (isset($_SESSION['user_id'])): ?>

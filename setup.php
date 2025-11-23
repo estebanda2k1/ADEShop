@@ -70,7 +70,7 @@ $result = $stmt->fetch();
 
 if ($result['count'] > 0) {
     // Ya existe un administrador, redirigir al login
-    header('Location: admin/login.php');
+    header('Location: iniciarSesion.php');
     exit;
 }
 
@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (!preg_match('/^[0-9]{10}$/', $cedula)) {
         $errors['cedula'] = 'La cédula debe contener exactamente 10 dígitos numéricos.';
     } elseif (!validarCedulaEcuatoriana($cedula)) {
-        $errors['cedula'] = 'La cédula ingresada no es válida según el algoritmo ecuatoriano.';
+        $errors['cedula'] = 'Ingrese una cédula válida ecuatoriana.';
     }
     
     if (empty($password)) {

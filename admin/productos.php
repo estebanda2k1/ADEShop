@@ -109,6 +109,26 @@ require '../templates/header.php';
         .in-stock {
             background-color: #28a745;
         }
+        .offer-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #dc3545;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            z-index: 10;
+        }
+        .price-original {
+            text-decoration: line-through;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        .price-sale {
+            color: #dc3545;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body class="bg-light">
@@ -219,6 +239,12 @@ require '../templates/header.php';
                                 </div>
                             <?php endif; ?>
                             
+                            <?php if ($producto['is_on_sale']): ?>
+                                <span class="offer-badge">
+                                    -<?php echo $producto['sale_percentage']; ?>% OFF
+                                </span>
+                            <?php endif; ?>
+                            
                             <span class="badge stock-badge <?php echo $producto['stock'] <= 5 ? 'low-stock' : 'in-stock'; ?>">
                                 Stock: <?php echo $producto['stock']; ?>
                             </span>
@@ -229,7 +255,18 @@ require '../templates/header.php';
                             <p class="text-muted small mb-2">
                                 <i class="bi bi-tag"></i> <?php echo htmlspecialchars($producto['category_name'] ?? 'Sin categoría'); ?>
                             </p>
-                            <h4 class="text-primary mb-3">$<?php echo number_format($producto['price'], 2); ?></h4>
+                            
+                            <?php if ($producto['is_on_sale'] && $producto['sale_price']): ?>
+                                <div class="mb-2">
+                                    <span class="price-original">$<?php echo number_format($producto['price'], 2); ?></span>
+                                </div>
+                                <h4 class="price-sale mb-1">$<?php echo number_format($producto['sale_price'], 2); ?></h4>
+                                <p class="text-success small mb-3">
+                                    Ahorras: $<?php echo number_format($producto['price'] - $producto['sale_price'], 2); ?>
+                                </p>
+                            <?php else: ?>
+                                <h4 class="text-primary mb-3">$<?php echo number_format($producto['price'], 2); ?></h4>
+                            <?php endif; ?>
                             
                             <div class="d-grid gap-2">
                                 <a href="producto_ver.php?id=<?php echo $producto['id']; ?>" class="btn btn-sm btn-info text-white">

@@ -1,5 +1,6 @@
 <?php
 require 'config.php';
+require 'cart_helper.php';
 
 // Verificar que el usuario esté logueado
 if (!isset($_SESSION['user_id'])) {
@@ -65,8 +66,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Confirmar transacción
         $pdo->commit();
         
-        // Vaciar carrito
+        // Vaciar carrito de sesión y base de datos
         $_SESSION['cart'] = [];
+        clearCartFromDatabase($pdo, $_SESSION['user_id']);
         
         $success = true;
         $order_number = $order_id;

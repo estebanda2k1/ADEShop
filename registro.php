@@ -148,7 +148,7 @@ require 'templates/header.php';
             </div>
             <div class="text-center mt-3">
                 <a href="index.php" class="btn btn-primary">Ir a la tienda</a>
-                <a href="admin/login.php" class="btn btn-secondary">Iniciar sesión</a>
+                <a href="iniciarSesion.php" class="btn btn-secondary">Iniciar sesión</a>
             </div>
         <?php endif; ?>
         
@@ -265,7 +265,7 @@ require 'templates/header.php';
                 <hr class="my-4">
                 
                 <p class="text-center mb-0">
-                    ¿Ya tienes una cuenta? <a href="admin/login.php">Inicia sesión aquí</a>
+                    ¿Ya tienes una cuenta? <a href="iniciarSesion.php">Inicia sesión aquí</a>
                 </p>
             </div>
         </div>

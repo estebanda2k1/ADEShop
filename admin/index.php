@@ -2,7 +2,7 @@
 require '../config.php';
 // Simple auth check
 if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
-    header('Location: login.php'); exit;
+    header('Location: ../iniciarSesion.php'); exit;
 }
 require '../templates/header.php';
 ?>

@@ -10,6 +10,46 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_admin']) || $_SESSION['
 $error = '';
 $success = '';
 
+// Procesar creación de nueva categoría vía AJAX
+if (isset($_POST['ajax_create_category']) && !empty($_POST['new_category_name'])) {
+    header('Content-Type: application/json');
+    $new_category_name = trim($_POST['new_category_name']);
+    
+    try {
+        // Verificar si la categoría ya existe
+        $stmt = $pdo->prepare('SELECT id, name FROM categories WHERE name = ?');
+        $stmt->execute([$new_category_name]);
+        $existing = $stmt->fetch();
+        
+        if ($existing) {
+            // Si existe, devolver la categoría existente
+            echo json_encode([
+                'success' => true, 
+                'id' => $existing['id'], 
+                'name' => $existing['name'],
+                'already_exists' => true
+            ]);
+        } else {
+            // Si no existe, crear nueva
+            $stmt = $pdo->prepare('INSERT INTO categories (name) VALUES (?)');
+            $stmt->execute([$new_category_name]);
+            $new_id = $pdo->lastInsertId();
+            echo json_encode([
+                'success' => true, 
+                'id' => $new_id, 
+                'name' => $new_category_name,
+                'already_exists' => false
+            ]);
+        }
+    } catch (PDOException $e) {
+        echo json_encode([
+            'success' => false, 
+            'message' => 'Error al crear la categoría: ' . $e->getMessage()
+        ]);
+    }
+    exit;
+}
+
 // Obtener categorías
 $categorias = $pdo->query('SELECT * FROM categories ORDER BY name')->fetchAll();
 
@@ -32,6 +72,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $price = trim($_POST['price'] ?? '');
     $stock = trim($_POST['stock'] ?? '');
     $category_id = $_POST['category_id'] ?? null;
+    $is_on_sale = isset($_POST['is_on_sale']) ? 1 : 0;
+    $sale_price = trim($_POST['sale_price'] ?? '');
+    $sale_percentage = trim($_POST['sale_percentage'] ?? '');
     
     // Validaciones
     if (empty($name)) {
@@ -40,6 +83,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'El precio debe ser un número válido mayor o igual a 0';
     } elseif (empty($stock) || !is_numeric($stock) || $stock < 0) {
         $error = 'El stock debe ser un número válido mayor o igual a 0';
+    } elseif ($is_on_sale && (empty($sale_price) || !is_numeric($sale_price) || $sale_price < 0)) {
+        $error = 'Si el producto está en oferta, debes ingresar un precio de oferta válido';
+    } elseif ($is_on_sale && $sale_price >= $price) {
+        $error = 'El precio de oferta debe ser menor que el precio normal';
     } else {
         // Obtener imagen seleccionada
         $image_path = null;
@@ -49,8 +96,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         if (empty($error)) {
             try {
-                $stmt = $pdo->prepare('INSERT INTO products (name, description, price, stock, image, category_id) VALUES (?, ?, ?, ?, ?, ?)');
-                $stmt->execute([$name, $description, $price, $stock, $image_path, $category_id ?: null]);
+                $stmt = $pdo->prepare('INSERT INTO products (name, description, price, stock, image, category_id, is_on_sale, sale_price, sale_percentage) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
+                $stmt->execute([$name, $description, $price, $stock, $image_path, $category_id ?: null, $is_on_sale, $is_on_sale ? $sale_price : null, $is_on_sale && !empty($sale_percentage) ? $sale_percentage : null]);
                 
                 $_SESSION['message'] = 'Producto creado exitosamente';
                 $_SESSION['message_type'] = 'success';
@@ -147,6 +194,9 @@ require '../templates/header.php';
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
+                                <button type="button" class="btn btn-sm btn-outline-primary mt-2" data-bs-toggle="modal" data-bs-target="#modalCrearCategoria">
+                                    <i class="bi bi-plus-circle"></i> Crear nueva categoría
+                                </button>
                             </div>
                         </div>
                         
@@ -218,6 +268,59 @@ require '../templates/header.php';
                             <img id="imagePreview" class="image-preview img-fluid rounded mt-2" alt="Vista previa">
                         </div>
                         
+                        <div class="card bg-light mb-4">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="bi bi-tag-fill"></i> Configuración de Oferta
+                                </h5>
+                                
+                                <div class="form-check form-switch mb-3">
+                                    <input class="form-check-input" type="checkbox" id="is_on_sale" name="is_on_sale" onchange="toggleOfferFields()">
+                                    <label class="form-check-label" for="is_on_sale">
+                                        <strong>Producto en Oferta</strong>
+                                    </label>
+                                </div>
+                                
+                                <div id="offerFields" style="display: none;">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="sale_price" class="form-label">
+                                                Precio de Oferta (USD) <span class="text-danger">*</span>
+                                            </label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">$</span>
+                                                <input type="number" 
+                                                       class="form-control" 
+                                                       id="sale_price" 
+                                                       name="sale_price" 
+                                                       min="0"
+                                                       step="0.01"
+                                                       placeholder="0.00">
+                                            </div>
+                                            <small class="form-text text-muted">Debe ser menor que el precio normal</small>
+                                        </div>
+                                        
+                                        <div class="col-md-6 mb-3">
+                                            <label for="sale_percentage" class="form-label">
+                                                Descuento (%) <span class="text-muted">(Opcional)</span>
+                                            </label>
+                                            <div class="input-group">
+                                                <input type="number" 
+                                                       class="form-control" 
+                                                       id="sale_percentage" 
+                                                       name="sale_percentage" 
+                                                       min="1"
+                                                       max="99"
+                                                       placeholder="Ej: 20">
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                            <small class="form-text text-muted">Se mostrará como badge de descuento</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <hr>
                         
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
@@ -262,6 +365,226 @@ function previewSelectedImage(select) {
         preview.style.display = 'none';
     }
 }
+
+function toggleOfferFields() {
+    const isOnSale = document.getElementById('is_on_sale').checked;
+    const offerFields = document.getElementById('offerFields');
+    const salePrice = document.getElementById('sale_price');
+    
+    if (isOnSale) {
+        offerFields.style.display = 'block';
+        salePrice.required = true;
+    } else {
+        offerFields.style.display = 'none';
+        salePrice.required = false;
+        salePrice.value = '';
+        document.getElementById('sale_percentage').value = '';
+    }
+}
+
+// Auto-calcular precio de oferta basado en porcentaje
+document.getElementById('sale_percentage')?.addEventListener('input', function() {
+    const priceInput = document.getElementById('price');
+    const salePriceInput = document.getElementById('sale_price');
+    const price = parseFloat(priceInput.value) || 0;
+    const percentage = parseFloat(this.value) || 0;
+    
+    if (price > 0 && percentage > 0 && percentage <= 99) {
+        const discount = price * (percentage / 100);
+        const salePrice = price - discount;
+        salePriceInput.value = salePrice.toFixed(2);
+    } else if (percentage === 0 || this.value === '') {
+        salePriceInput.value = '';
+    }
+});
+
+// Auto-calcular porcentaje basado en precio de oferta
+document.getElementById('sale_price')?.addEventListener('input', function() {
+    const priceInput = document.getElementById('price');
+    const percentageInput = document.getElementById('sale_percentage');
+    const price = parseFloat(priceInput.value) || 0;
+    const salePrice = parseFloat(this.value) || 0;
+    
+    if (price > 0 && salePrice > 0 && salePrice < price) {
+        const discount = price - salePrice;
+        const percentage = (discount / price * 100).toFixed(0);
+        percentageInput.value = percentage;
+    } else if (salePrice === 0 || this.value === '') {
+        percentageInput.value = '';
+    }
+});
+
+// También recalcular cuando cambie el precio normal
+document.getElementById('price')?.addEventListener('input', function() {
+    const percentageInput = document.getElementById('sale_percentage');
+    const percentage = parseFloat(percentageInput.value) || 0;
+    
+    if (percentage > 0) {
+        // Trigger el evento para recalcular
+        percentageInput.dispatchEvent(new Event('input'));
+    }
+});
+
+// Función para crear categoría vía AJAX
+function crearCategoria(event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    
+    const categoryNameInput = document.getElementById('new_category_name');
+    const messageDiv = document.getElementById('categoryMessage');
+    
+    if (!categoryNameInput || !messageDiv) {
+        console.error('Elementos del formulario no encontrados');
+        return false;
+    }
+    
+    const categoryName = categoryNameInput.value.trim();
+    
+    if (!categoryName) {
+        messageDiv.innerHTML = '<div class="alert alert-danger">El nombre de la categoría es requerido</div>';
+        return false;
+    }
+    
+    // Crear FormData
+    const formData = new FormData();
+    formData.append('ajax_create_category', '1');
+    formData.append('new_category_name', categoryName);
+    
+    // Mostrar indicador de carga
+    messageDiv.innerHTML = '<div class="alert alert-info"><i class="bi bi-hourglass-split"></i> Creando categoría...</div>';
+    
+    // Enviar petición AJAX
+    fetch(window.location.href, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+        if (!response.ok) {
+            throw new Error('Error en la respuesta del servidor (HTTP ' + response.status + ')');
+        }
+        return response.text();
+    })
+    .then(text => {
+        console.log('Response text:', text);
+        try {
+            const data = JSON.parse(text);
+            if (data.success) {
+                const categorySelect = document.getElementById('category_id');
+                
+                // Verificar si la categoría ya existe en el select
+                let optionExists = false;
+                for (let i = 0; i < categorySelect.options.length; i++) {
+                    if (categorySelect.options[i].value == data.id) {
+                        optionExists = true;
+                        categorySelect.options[i].selected = true;
+                        break;
+                    }
+                }
+                
+                // Si no existe, agregarla
+                if (!optionExists) {
+                    const newOption = document.createElement('option');
+                    newOption.value = data.id;
+                    newOption.textContent = data.name;
+                    newOption.selected = true;
+                    categorySelect.appendChild(newOption);
+                }
+                
+                // Mostrar mensaje apropiado
+                if (data.already_exists) {
+                    messageDiv.innerHTML = '<div class="alert alert-info">La categoría ya existía. Se ha seleccionado.</div>';
+                } else {
+                    messageDiv.innerHTML = '<div class="alert alert-success">Categoría creada exitosamente</div>';
+                }
+                
+                // Limpiar el input
+                categoryNameInput.value = '';
+                
+                // Cerrar modal después de 1.5 segundos
+                setTimeout(() => {
+                    const modalElement = document.getElementById('modalCrearCategoria');
+                    if (modalElement) {
+                        const modal = bootstrap.Modal.getInstance(modalElement);
+                        if (modal) {
+                            modal.hide();
+                        } else {
+                            // Si no existe instancia, crear una y cerrar
+                            const newModal = new bootstrap.Modal(modalElement);
+                            newModal.hide();
+                        }
+                    }
+                    messageDiv.innerHTML = '';
+                }, 1500);
+            } else {
+                messageDiv.innerHTML = '<div class="alert alert-danger">' + (data.message || 'Error al crear la categoría') + '</div>';
+            }
+        } catch (e) {
+            console.error('Error parsing JSON:', e);
+            messageDiv.innerHTML = '<div class="alert alert-danger">Error: Respuesta inválida del servidor. Revisa la consola.</div>';
+        }
+    })
+    .catch(error => {
+        console.error('Fetch error:', error);
+        messageDiv.innerHTML = '<div class="alert alert-danger">Error de conexión: ' + error.message + '</div>';
+    });
+    
+    return false;
+}
+
+// Agregar event listener al botón cuando el DOM esté listo
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCategoryButton);
+} else {
+    initCategoryButton();
+}
+
+function initCategoryButton() {
+    const btn = document.getElementById('btnCrearCategoria');
+    if (btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            crearCategoria(e);
+        });
+    }
+}
 </script>
+<!-- Modal para crear categoría -->
+<div class="modal fade" id="modalCrearCategoria" tabindex="-1" data-bs-backdrop="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="formCrearCategoria">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-folder-plus"></i> Crear Nueva Categoría
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="categoryMessage"></div>
+                    <div class="mb-3">
+                        <label for="new_category_name" class="form-label">Nombre de la Categoría</label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="new_category_name" 
+                               name="new_category_name" 
+                               required
+                               placeholder="Ej: Camisetas, Zapatos, etc.">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" id="btnCrearCategoria" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i> Crear Categoría
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

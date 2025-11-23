@@ -1,6 +1,6 @@
 <?php
 require_once 'config.php';
-
+require_once 'cart_helper.php';
 
 // Inicializar variables de error
 $email_error = '';
@@ -30,6 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_name'] = $user['nombres'] . ' ' . $user['apellidos'];
             $_SESSION['is_admin'] = intval($user['is_admin']);
 
+            // Cargar carrito desde la base de datos
+            $_SESSION['cart'] = loadCartFromDatabase($pdo, $user['id']);
 
             if ($user['is_admin']) {
                 header("Location: dashboard.php");

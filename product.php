@@ -1,5 +1,6 @@
 <?php
 require 'config.php';
+require 'cart_helper.php';
 
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 if (!$id) {
@@ -19,6 +20,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $_SESSION['cart'][$id]['qty'] += $qty;
     }
+    
+    // Sincronizar con la base de datos si el usuario está logueado
+    if (isset($_SESSION['user_id'])) {
+        syncCart($pdo, $_SESSION['user_id'], $_SESSION['cart']);
+    }
+    
     header('Location: cart.php'); exit;
 }
 

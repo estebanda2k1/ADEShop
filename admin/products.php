@@ -1,6 +1,6 @@
 <?php
 require '../config.php';
-if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) { header('Location: login.php'); exit; }
+if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) { header('Location: ../iniciarSesion.php'); exit; }
 require '../templates/header.php';
 
 $stmt = $pdo->query('SELECT p.*, c.name AS category_name FROM products p LEFT JOIN categories c ON p.category_id=c.id');
