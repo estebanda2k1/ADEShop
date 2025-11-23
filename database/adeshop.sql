@@ -55,20 +55,4 @@ CREATE TABLE IF NOT EXISTS order_items (
   FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
 
--- sample data --
--- Usuario administrador por defecto: admin@admin.com / admin123
-INSERT INTO users (nombres, apellidos, email, cedula, username, password, is_admin) VALUES
-('Administrador', 'Sistema', 'admin@admin.com', '9999999999', 'admin', '$2y$10$JlDedjSIYNVdenuk1SS6neW02H7EZNOKRtBw0nJ9JBR04RRj5iIdq', 1) 
-ON DUPLICATE KEY UPDATE 
-    password = '$2y$10$JlDedjSIYNVdenuk1SS6neW02H7EZNOKRtBw0nJ9JBR04RRj5iIdq',
-    is_admin = 1;
 
-INSERT INTO categories (name) VALUES
-('T-Shirts'),('Hoodies'),('Jeans')
-ON DUPLICATE KEY UPDATE name=name;
-
-INSERT INTO products (name, description, price, stock, image, category_id) VALUES
-('Basic White Tee','Soft cotton t-shirt','9.99', 15, 'assets/images/white-tee.jpg',1),
-('Logo Hoodie','Pullover hoodie with logo','29.99', 8, 'assets/images/hoodie.jpg',2),
-('Slim Jeans','Blue slim fit jeans','39.99', 3, 'assets/images/jeans.jpg',3)
-ON DUPLICATE KEY UPDATE name=VALUES(name);
