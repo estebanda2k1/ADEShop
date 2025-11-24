@@ -239,7 +239,7 @@ require '../templates/header.php';
                                 </div>
                             <?php endif; ?>
                             
-                            <?php if ($producto['is_on_sale']): ?>
+                            <?php if (isset($producto['is_on_sale']) && $producto['is_on_sale'] && isset($producto['sale_percentage']) && $producto['sale_percentage']): ?>
                                 <span class="offer-badge">
                                     -<?php echo $producto['sale_percentage']; ?>% OFF
                                 </span>
@@ -256,7 +256,7 @@ require '../templates/header.php';
                                 <i class="bi bi-tag"></i> <?php echo htmlspecialchars($producto['category_name'] ?? 'Sin categoría'); ?>
                             </p>
                             
-                            <?php if ($producto['is_on_sale'] && $producto['sale_price']): ?>
+                            <?php if (isset($producto['is_on_sale']) && $producto['is_on_sale'] && isset($producto['sale_price']) && $producto['sale_price']): ?>
                                 <div class="mb-2">
                                     <span class="price-original">$<?php echo number_format($producto['price'], 2); ?></span>
                                 </div>

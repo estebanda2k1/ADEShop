@@ -123,7 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 header('Location: productos.php');
                 exit;
             } catch (PDOException $e) {
-                $error = 'Error al actualizar el producto. Por favor intenta nuevamente.';
+                $error = 'Error al actualizar el producto: ' . $e->getMessage();
             }
         }
     }

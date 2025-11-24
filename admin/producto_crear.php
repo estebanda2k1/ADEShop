@@ -104,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 header('Location: productos.php');
                 exit;
             } catch (PDOException $e) {
-                $error = 'Error al crear el producto. Por favor intenta nuevamente.';
+                $error = 'Error al crear el producto: ' . $e->getMessage();
             }
         }
     }
