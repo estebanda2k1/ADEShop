@@ -72,3 +72,8 @@ CREATE TABLE IF NOT EXISTS cart_items (
   UNIQUE KEY unique_user_product (user_id, product_id)
 );
 
+-- Insertar usuario administrador por defecto
+-- Contraseña: admin123 (hasheada con password_hash)
+INSERT INTO users (nombres, apellidos, email, cedula, username, password, is_admin) 
+VALUES ('Admin', 'Sistema', 'admin@admin.com', '0000000000', 'admin', '$2y$10$RivKBJW9aAhiPQQq2tXnTObwANYYkGgVj6rpE3z.XK2q2bazVoQsq', 1);
+
