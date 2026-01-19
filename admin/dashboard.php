@@ -1,5 +1,5 @@
 <?php
-require_once 'config.php';
+require_once '../config.php';
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== 1) {
     header('Location: index.php');
     exit;
@@ -15,7 +15,7 @@ $total_productos = $stmt->fetch()['total'];
 $stmt = $pdo->query('SELECT COUNT(*) as total FROM orders');
 $total_pedidos = $stmt->fetch()['total'];
 
-require 'templates/header.php';
+require '../templates/header.php';
 ?>
 
 <!DOCTYPE html>

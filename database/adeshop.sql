@@ -44,6 +44,9 @@ CREATE TABLE IF NOT EXISTS orders (
   user_id INT NOT NULL,
   total DECIMAL(10,2) NOT NULL,
   status VARCHAR(50) DEFAULT 'pending',
+  payment_method VARCHAR(50) NULL COMMENT 'Método de pago: credit_card, debit_card, paypal, bank_transfer, cash',
+  payment_status VARCHAR(50) DEFAULT 'pending' COMMENT 'Estado del pago: pending, completed, failed',
+  payment_details TEXT NULL COMMENT 'Detalles adicionales del pago en formato JSON',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );

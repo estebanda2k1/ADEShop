@@ -112,8 +112,8 @@ require '../templates/header.php';
                 <h1 class="mb-0"><i class="bi bi-receipt"></i> Gestión de Órdenes</h1>
                 <p class="mb-0">Administra todas las órdenes de compra</p>
             </div>
-            <a href="dashboard.php" class="btn btn-light">
-                <i class="bi bi-speedometer2"></i> Dashboard
+            <a href="../dashboard.php" class="btn btn-light">
+                <i class="bi bi-arrow-left"></i> Volver al Dashboard
             </a>
         </div>
     </div>
@@ -238,6 +238,7 @@ require '../templates/header.php';
                                 <th>Email</th>
                                 <th>Items</th>
                                 <th>Total</th>
+                                <th>Método de Pago</th>
                                 <th>Estado</th>
                                 <th>Fecha</th>
                                 <th>Acciones</th>
@@ -251,6 +252,22 @@ require '../templates/header.php';
                                     <td><?php echo htmlspecialchars($orden['email']); ?></td>
                                     <td><?php echo $orden['items_count']; ?></td>
                                     <td class="fw-bold text-success">$<?php echo number_format($orden['total'], 2); ?></td>
+                                    <td>
+                                        <?php 
+                                        if (!empty($orden['payment_method'])) {
+                                            $payment_icons = [
+                                                'credit_card' => '<i class="bi bi-credit-card text-primary" title="Tarjeta de Crédito"></i>',
+                                                'debit_card' => '<i class="bi bi-credit-card text-success" title="Tarjeta de Débito"></i>',
+                                                'paypal' => '<i class="bi bi-paypal" style="color: #003087;" title="PayPal"></i>',
+                                                'bank_transfer' => '<i class="bi bi-bank text-info" title="Transferencia"></i>',
+                                                'cash' => '<i class="bi bi-cash-coin text-warning" title="Efectivo"></i>'
+                                            ];
+                                            echo $payment_icons[$orden['payment_method']] ?? htmlspecialchars($orden['payment_method']);
+                                        } else {
+                                            echo '<span class="text-muted">-</span>';
+                                        }
+                                        ?>
+                                    </td>
                                     <td>
                                         <span class="status-badge status-<?php echo $orden['status']; ?>">
                                             <?php 

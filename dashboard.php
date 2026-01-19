@@ -144,6 +144,19 @@ require 'templates/header.php';
                 </div>
             </div>
         </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card dashboard-card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-graph-up-arrow text-info" style="font-size: 4rem;"></i>
+                    <h3 class="card-title mt-3">Productos Más Vendidos</h3>
+                    <p class="card-text">Ranking y estadísticas de ventas por producto</p>
+                    <a href="productos_mas_vendidos.php" class="btn btn-info btn-lg text-white">
+                        <i class="bi bi-arrow-right-circle"></i> Acceder
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
