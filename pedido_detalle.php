@@ -8,10 +8,57 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $order_id = $_GET['id'] ?? null;
+$message = '';
+$message_type = '';
 
 if (!$order_id) {
     header('Location: mis_pedidos.php');
     exit;
+}
+
+// Procesar cancelación de orden
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_order'])) {
+    try {
+        $pdo->beginTransaction();
+        
+        // Verificar que la orden pertenezca al usuario y esté en estado cancelable
+        $stmt = $pdo->prepare('SELECT * FROM orders WHERE id = ? AND user_id = ?');
+        $stmt->execute([$order_id, $_SESSION['user_id']]);
+        $order = $stmt->fetch();
+        
+        if (!$order) {
+            throw new Exception('Orden no encontrada');
+        }
+        
+        if ($order['status'] !== 'pending') {
+            throw new Exception('Solo se pueden cancelar órdenes pendientes');
+        }
+        
+        // Obtener items de la orden para devolver el stock
+        $stmt = $pdo->prepare('SELECT product_id, quantity FROM order_items WHERE order_id = ?');
+        $stmt->execute([$order_id]);
+        $order_items = $stmt->fetchAll();
+        
+        // Devolver stock a cada producto
+        foreach ($order_items as $item) {
+            $stmt = $pdo->prepare('UPDATE products SET stock = stock + ? WHERE id = ?');
+            $stmt->execute([$item['quantity'], $item['product_id']]);
+        }
+        
+        // Actualizar estado de la orden
+        $stmt = $pdo->prepare('UPDATE orders SET status = ?, payment_status = ? WHERE id = ?');
+        $stmt->execute(['cancelled', 'refunded', $order_id]);
+        
+        $pdo->commit();
+        
+        $message = '✓ Pedido cancelado exitosamente. Los productos han sido devueltos al inventario.';
+        $message_type = 'success';
+        
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        $message = 'Error al cancelar el pedido: ' . $e->getMessage();
+        $message_type = 'danger';
+    }
 }
 
 // Obtener la orden verificando que pertenezca al usuario
@@ -44,53 +91,44 @@ $items = $stmt->fetchAll();
 require 'templates/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalle del Pedido #<?php echo $orden['id']; ?> - ADESHOP</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .page-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 2rem 0;
-            margin-bottom: 2rem;
-        }
-        .status-badge {
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 1rem;
-            font-weight: 600;
-        }
-        .status-pending {
-            background-color: #ffc107;
-            color: #000;
-        }
-        .status-completed {
-            background-color: #28a745;
-            color: white;
-        }
-        .status-cancelled {
-            background-color: #dc3545;
-            color: white;
-        }
-        .info-label {
-            font-weight: 600;
-            color: #6c757d;
-        }
-        .order-summary-card {
-            border: none;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-    </style>
-</head>
-<body>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+    .page-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+    }
+    .status-badge {
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 1rem;
+        font-weight: 600;
+    }
+    .status-pending {
+        background-color: #ffc107;
+        color: #000;
+    }
+    .status-completed {
+        background-color: #28a745;
+        color: white;
+    }
+    .status-cancelled {
+        background-color: #dc3545;
+        color: white;
+    }
+    .info-label {
+        font-weight: 600;
+        color: #6c757d;
+    }
+    .order-summary-card {
+        border: none;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+</style>
 
 <div class="page-header">
     <div class="container">
@@ -107,6 +145,25 @@ require 'templates/header.php';
 </div>
 
 <div class="container mb-5">
+    <!-- Mensajes de alerta -->
+    <?php if ($message): ?>
+        <div class="alert alert-<?php echo $message_type; ?> alert-dismissible fade show" role="alert">
+            <?php echo htmlspecialchars($message); ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
+    
+    <?php if (isset($_SESSION['message'])): ?>
+        <div class="alert alert-<?php echo $_SESSION['message_type']; ?> alert-dismissible fade show" role="alert">
+            <?php 
+            echo htmlspecialchars($_SESSION['message']); 
+            unset($_SESSION['message']);
+            unset($_SESSION['message_type']);
+            ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <?php endif; ?>
+    
     <div class="row">
         <!-- Productos -->
         <div class="col-lg-8">
@@ -134,7 +191,11 @@ require 'templates/header.php';
                                                     <img src="<?php echo htmlspecialchars($item['image']); ?>" 
                                                          alt="<?php echo htmlspecialchars($item['product_name']); ?>"
                                                          style="width: 60px; height: 60px; object-fit: cover; border-radius: 5px;"
-                                                         class="me-3">
+                                                         class="me-3"
+                                                         onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                    <div class="bg-secondary text-white align-items-center justify-content-center me-3" style="width: 60px; height: 60px; border-radius: 5px; display: none;">
+                                                        <i class="bi bi-image"></i>
+                                                    </div>
                                                 <?php else: ?>
                                                     <div class="bg-secondary text-white d-flex align-items-center justify-content-center me-3"
                                                          style="width: 60px; height: 60px; border-radius: 5px;">
@@ -221,9 +282,17 @@ require 'templates/header.php';
                     <h6 class="mb-3"><i class="bi bi-info-circle-fill text-primary"></i> Estado del Pedido</h6>
                     
                     <?php if ($orden['status'] === 'pending'): ?>
-                        <div class="alert alert-warning mb-0">
+                        <div class="alert alert-warning mb-3">
                             <strong>Pendiente:</strong> Tu pedido está siendo procesado. Te notificaremos cuando sea enviado.
                         </div>
+                        
+                        <!-- Botón para cancelar pedido -->
+                        <form method="POST" onsubmit="return confirm('¿Estás seguro de que deseas cancelar este pedido? El stock de los productos será devuelto.');">
+                            <input type="hidden" name="cancel_order" value="1">
+                            <button type="submit" class="btn btn-danger w-100">
+                                <i class="bi bi-x-circle"></i> Cancelar Pedido
+                            </button>
+                        </form>
                     <?php elseif ($orden['status'] === 'completed'): ?>
                         <div class="alert alert-success mb-0">
                             <strong>Completado:</strong> Tu pedido ha sido entregado satisfactoriamente.
@@ -240,5 +309,5 @@ require 'templates/header.php';
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+
+<?php require 'templates/footer.php'; ?>

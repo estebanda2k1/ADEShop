@@ -116,6 +116,13 @@ require 'templates/header.php';
             </div>
         </div>
     <?php else: ?>
+        <!-- Mensaje informativo -->
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <i class="bi bi-info-circle-fill"></i>
+            <strong>Información:</strong> Puedes cancelar tus pedidos <strong>pendientes</strong> haciendo clic en "Ver Detalles". El stock de los productos será devuelto automáticamente.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
         <div class="row mb-3">
             <div class="col">
                 <h5>Total de pedidos: <span class="badge bg-primary"><?php echo $total_orders; ?></span></h5>
@@ -167,7 +174,14 @@ require 'templates/header.php';
                                     </small>
                                 </div>
                                 <span class="status-badge status-<?php echo $orden['status']; ?>">
-                                    <?php echo $status_labels[$orden['status']] ?? $orden['status']; ?>
+                                    <?php 
+                                    $status_icons = [
+                                        'pending' => '<i class="bi bi-clock-history"></i> ',
+                                        'completed' => '<i class="bi bi-check-circle"></i> ',
+                                        'cancelled' => '<i class="bi bi-x-circle"></i> '
+                                    ];
+                                    echo ($status_icons[$orden['status']] ?? '') . ($status_labels[$orden['status']] ?? $orden['status']); 
+                                    ?>
                                 </span>
                             </div>
                             
@@ -182,7 +196,11 @@ require 'templates/header.php';
                                                     <img src="<?php echo htmlspecialchars($item['image']); ?>" 
                                                          alt="<?php echo htmlspecialchars($item['name']); ?>"
                                                          style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;"
-                                                         class="me-2">
+                                                         class="me-2"
+                                                         onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                    <div class="bg-secondary text-white align-items-center justify-content-center me-2" style="width: 50px; height: 50px; border-radius: 5px; display: none;">
+                                                        <i class="bi bi-image"></i>
+                                                    </div>
                                                 <?php else: ?>
                                                     <div class="bg-secondary text-white d-flex align-items-center justify-content-center me-2"
                                                          style="width: 50px; height: 50px; border-radius: 5px;">
@@ -223,9 +241,14 @@ require 'templates/header.php';
                             </div>
                         </div>
                         <div class="card-footer bg-white border-top-0 pt-0">
-                            <a href="pedido_detalle.php?id=<?php echo $orden['id']; ?>" class="btn btn-sm btn-outline-primary w-100">
-                                <i class="bi bi-eye"></i> Ver Detalles
-                            </a>
+                            <div class="d-grid">
+                                <a href="pedido_detalle.php?id=<?php echo $orden['id']; ?>" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i> Ver Detalles
+                                    <?php if ($orden['status'] === 'pending'): ?>
+                                        y Gestionar
+                                    <?php endif; ?>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>

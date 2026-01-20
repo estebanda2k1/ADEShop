@@ -146,10 +146,14 @@ require '../templates/header.php';
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <?php if ($item['image']): ?>
-                                                    <img src="../<?php echo htmlspecialchars($item['image']); ?>" 
+                                                    <img src="<?php echo htmlspecialchars($item['image']); ?>" 
                                                          alt="<?php echo htmlspecialchars($item['product_name']); ?>"
                                                          style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;"
-                                                         class="me-3">
+                                                         class="me-3"
+                                                         onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                    <div class="bg-secondary text-white align-items-center justify-content-center me-3" style="width: 50px; height: 50px; border-radius: 5px; display: none;">
+                                                        <i class="bi bi-image"></i>
+                                                    </div>
                                                 <?php else: ?>
                                                     <div class="bg-secondary text-white d-flex align-items-center justify-content-center me-3"
                                                          style="width: 50px; height: 50px; border-radius: 5px;">

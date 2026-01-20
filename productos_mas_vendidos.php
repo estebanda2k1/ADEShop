@@ -211,7 +211,8 @@ require 'templates/header.php';
                             <?php if ($producto['image']): ?>
                                 <img src="<?php echo htmlspecialchars($producto['image']); ?>" 
                                      alt="<?php echo htmlspecialchars($producto['name']); ?>"
-                                     class="product-img">
+                                     class="product-img"
+                                     onerror="this.style.display='none'; var div = document.createElement('div'); div.className='bg-secondary text-white d-flex align-items-center justify-content-center h-100'; div.innerHTML='<i class=\"bi bi-image\" style=\"font-size: 3rem;\"></i>'; this.parentElement.appendChild(div); this.onerror=null;">
                             <?php else: ?>
                                 <div class="bg-secondary text-white d-flex align-items-center justify-content-center h-100">
                                     <i class="bi bi-image" style="font-size: 3rem;"></i>

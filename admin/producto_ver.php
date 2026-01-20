@@ -99,9 +99,10 @@ require '../templates/header.php';
             <div class="card shadow">
                 <div class="card-body text-center">
                     <?php if ($producto['image']): ?>
-                        <img src="../<?php echo htmlspecialchars($producto['image']); ?>" 
+                        <img src="<?php echo htmlspecialchars($producto['image']); ?>" 
                              alt="<?php echo htmlspecialchars($producto['name']); ?>"
-                             class="product-image">
+                             class="product-image"
+                             onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\"bg-secondary text-white p-5 rounded\" style=\"height: 300px; display: flex; align-items: center; justify-content: center;\"><div><i class=\"bi bi-image\" style=\"font-size: 4rem;\"></i><p class=\"mt-2\">Imagen no disponible</p></div></div>';">
                     <?php else: ?>
                         <div class="bg-secondary text-white p-5 rounded" style="height: 300px; display: flex; align-items: center; justify-content: center;">
                             <div>

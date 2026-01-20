@@ -241,7 +241,8 @@ require 'templates/header.php';
                             <?php if ($item['image']): ?>
                                 <img src="<?php echo htmlspecialchars($item['image']); ?>" 
                                      alt="<?php echo htmlspecialchars($item['name']); ?>"
-                                     style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
+                                     style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;"
+                                     onerror="this.style.display='none'; this.insertAdjacentHTML('afterend', '<div class=\"bg-secondary text-white d-flex align-items-center justify-content-center\" style=\"width: 80px; height: 80px; border-radius: 8px;\"><i class=\"bi bi-image\"></i></div>'); this.onerror=null;">
                             <?php else: ?>
                                 <div class="bg-secondary text-white d-flex align-items-center justify-content-center" 
                                      style="width: 80px; height: 80px; border-radius: 8px;">

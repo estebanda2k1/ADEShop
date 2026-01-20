@@ -197,7 +197,8 @@ $productos = $stmt->fetchAll();
                         <?php if ($producto['image']): ?>
                             <img src="<?php echo htmlspecialchars($producto['image']); ?>" 
                                  class="card-img-top" 
-                                 alt="<?php echo htmlspecialchars($producto['name']); ?>">
+                                 alt="<?php echo htmlspecialchars($producto['name']); ?>"
+                                 onerror="this.style.display='none'; this.insertAdjacentHTML('afterend', '<div class=\'no-image\'><i class=\'bi bi-image\' style=\'font-size: 3rem;\'></i></div>'); this.onerror=null;">
                         <?php else: ?>
                             <div class="no-image">
                                 <i class="bi bi-image" style="font-size: 3rem;"></i>

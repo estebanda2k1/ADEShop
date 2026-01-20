@@ -53,18 +53,6 @@ if (isset($_POST['ajax_create_category']) && !empty($_POST['new_category_name'])
 // Obtener categorías
 $categorias = $pdo->query('SELECT * FROM categories ORDER BY name')->fetchAll();
 
-// Obtener imágenes disponibles en la carpeta imagenes
-$imagenes_disponibles = [];
-$imagenes_dir = '../imagenes/';
-if (is_dir($imagenes_dir)) {
-    $archivos = scandir($imagenes_dir);
-    foreach ($archivos as $archivo) {
-        if ($archivo != '.' && $archivo != '..' && preg_match('/\.(jpg|jpeg|png|gif|webp)$/i', $archivo)) {
-            $imagenes_disponibles[] = $archivo;
-        }
-    }
-}
-
 // Procesar formulario
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name'] ?? '');
@@ -88,10 +76,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($is_on_sale && $sale_price >= $price) {
         $error = 'El precio de oferta debe ser menor que el precio normal';
     } else {
-        // Obtener imagen seleccionada
+        // Obtener URL de imagen
         $image_path = null;
-        if (!empty($_POST['image_select'])) {
-            $image_path = 'imagenes/' . $_POST['image_select'];
+        if (!empty($_POST['image_url'])) {
+            $image_path = trim($_POST['image_url']);
         }
         
         if (empty($error)) {
@@ -253,18 +241,16 @@ require '../templates/header.php';
                         </div>
                         
                         <div class="mb-4">
-                            <label for="image_select" class="form-label">
-                                Imagen del Producto
+                            <label for="image_url" class="form-label">
+                                URL de la Imagen del Producto
                             </label>
-                            <select class="form-select" id="image_select" name="image_select" onchange="previewSelectedImage(this)">
-                                <option value="">Selecciona una imagen</option>
-                                <?php foreach ($imagenes_disponibles as $imagen): ?>
-                                    <option value="<?php echo htmlspecialchars($imagen); ?>">
-                                        <?php echo htmlspecialchars($imagen); ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                            <small class="form-text text-muted">Selecciona una imagen de la carpeta 'imagenes'</small>
+                            <input type="url" 
+                                   class="form-control" 
+                                   id="image_url" 
+                                   name="image_url" 
+                                   placeholder="https://ejemplo.com/imagen.jpg"
+                                   oninput="previewImageFromURL(this)">
+                            <small class="form-text text-muted">Ingresa la URL completa de la imagen del producto</small>
                             <img id="imagePreview" class="image-preview img-fluid rounded mt-2" alt="Vista previa">
                         </div>
                         
@@ -355,14 +341,26 @@ require '../templates/header.php';
     }, false);
 })();
 
-function previewSelectedImage(select) {
+function previewImageFromURL(input) {
     const preview = document.getElementById('imagePreview');
+    const url = input.value.trim();
     
-    if (select.value) {
-        preview.src = '../imagenes/' + select.value;
+    if (url) {
+        preview.src = url;
         preview.style.display = 'block';
+        
+        // Manejar errores de carga de imagen
+        preview.onerror = function() {
+            preview.style.display = 'none';
+            input.setCustomValidity('La URL de la imagen no es válida o no se puede cargar');
+        };
+        
+        preview.onload = function() {
+            input.setCustomValidity('');
+        };
     } else {
         preview.style.display = 'none';
+        input.setCustomValidity('');
     }
 }
 

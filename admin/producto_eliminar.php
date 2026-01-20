@@ -22,10 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt = $pdo->prepare('DELETE FROM products WHERE id = ?');
                 $stmt->execute([$id]);
                 
-                // Eliminar la imagen si existe
-                if ($producto['image'] && file_exists('../' . $producto['image'])) {
-                    unlink('../' . $producto['image']);
-                }
+                // Nota: Ya no eliminamos archivos físicos porque las imágenes son URLs externas
                 
                 $_SESSION['message'] = 'Producto eliminado exitosamente';
                 $_SESSION['message_type'] = 'success';

@@ -231,8 +231,11 @@ require '../templates/header.php';
                 <div class="col-md-3 mb-4">
                     <div class="card product-card">
                         <div class="position-relative">
-                            <?php if ($producto['image'] && file_exists('../' . $producto['image'])): ?>
-                                <img src="../<?php echo htmlspecialchars($producto['image']); ?>" class="card-img-top product-image" alt="<?php echo htmlspecialchars($producto['name']); ?>">
+                            <?php if ($producto['image']): ?>
+                                <img src="<?php echo htmlspecialchars($producto['image']); ?>" 
+                                     class="card-img-top product-image" 
+                                     alt="<?php echo htmlspecialchars($producto['name']); ?>"
+                                     onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'product-image bg-secondary d-flex align-items-center justify-content-center\'><i class=\'bi bi-image\' style=\'font-size: 4rem; color: white;\'></i></div>';">
                             <?php else: ?>
                                 <div class="product-image bg-secondary d-flex align-items-center justify-content-center">
                                     <i class="bi bi-image" style="font-size: 4rem; color: white;"></i>

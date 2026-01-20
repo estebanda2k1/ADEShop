@@ -12,6 +12,7 @@ if (!isset($pdo)) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ADESHOP Mini Marketplace</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <style>
     .navbar-brand img {
         height: 40px;
@@ -27,11 +28,16 @@ if (!isset($pdo)) {
       </a>
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav ms-auto align-items-center">
-          <li class="nav-item"><a class="nav-link" href="/ADESHOP/cart.php">Cart</a></li>
+          <li class="nav-item"><a class="nav-link" href="/ADESHOP/cart.php"><i class="bi bi-cart"></i> Carrito</a></li>
           
           <?php if (!isset($_SESSION['user_id'])): ?>
               <li class="nav-item"><a class="nav-link" href="/ADESHOP/iniciarSesion.php">Iniciar Sesión</a></li>
           <?php else: ?>
+              <li class="nav-item">
+                <a class="nav-link" href="/ADESHOP/mis_pedidos.php">
+                  <i class="bi bi-bag-check"></i> Mis Pedidos
+                </a>
+              </li>
               <li class="nav-item">
                 <span class="navbar-text me-2 text-white">
                   <?= htmlspecialchars($_SESSION['user_name']) ?>

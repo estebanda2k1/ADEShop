@@ -137,7 +137,8 @@ require 'templates/header.php';
                     <?php if ($product['image']): ?>
                         <img src="<?php echo htmlspecialchars($product['image']); ?>" 
                              class="product-image" 
-                             alt="<?php echo htmlspecialchars($product['name']); ?>">
+                             alt="<?php echo htmlspecialchars($product['name']); ?>"
+                             onerror="this.style.display='none'; this.insertAdjacentHTML('afterend', '<div class=\"text-center text-muted\"><i class=\"bi bi-image\" style=\"font-size: 5rem;\"></i><p class=\"mt-2\">Imagen no disponible</p></div>'); this.onerror=null;">
                     <?php else: ?>
                         <div class="text-center text-muted">
                             <i class="bi bi-image" style="font-size: 5rem;"></i>

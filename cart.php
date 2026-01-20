@@ -243,7 +243,8 @@ $cart = $_SESSION['cart'] ?? [];
                                 <div class="col-md-2">
                                     <?php if ($item['image']): ?>
                                         <img src="<?php echo htmlspecialchars($item['image']); ?>" 
-                                             alt="<?php echo htmlspecialchars($item['name']); ?>">
+                                             alt="<?php echo htmlspecialchars($item['name']); ?>"
+                                             onerror="this.style.display='none'; this.insertAdjacentHTML('afterend', '<div class=\"bg-secondary text-white d-flex align-items-center justify-content-center\" style=\"width: 100px; height: 100px; border-radius: 8px;\"><i class=\"bi bi-image\" style=\"font-size: 2rem;\"></i></div>'); this.onerror=null;">
                                     <?php else: ?>
                                         <div class="bg-secondary text-white d-flex align-items-center justify-content-center" 
                                              style="width: 100px; height: 100px; border-radius: 8px;">
